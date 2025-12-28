@@ -9,6 +9,7 @@
   "scripts": {
     "build": "npm run build --workspaces",
     "build:server": "npm run build --workspace=@xray/sdk && npm run build --workspace=@xray/server",
+    "build:server:deploy": "npm install && npm run build --workspace=@xray/sdk && npm run build --workspace=@xray/server",
     "dev:server": "npm run dev --workspace=@xray/server",
     "dev:dashboard": "npm run dev --workspace=@xray/dashboard",
     "dev:demo": "npm run dev --workspace=@xray/demo-app"
