@@ -1,6 +1,9 @@
 import { XRayExecution } from '@xray/sdk';
 
-const API_BASE = '/api';
+// Use environment variable in production, fallback to /api for local dev (with Vite proxy)
+// VITE_API_BASE_URL should be the full URL including /api (e.g., https://your-app.onrender.com/api)
+// For local dev, /api will be proxied by Vite to http://localhost:3001/api
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export interface ExecutionSummary {
   id: string;
