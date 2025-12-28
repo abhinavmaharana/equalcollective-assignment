@@ -1,0 +1,20 @@
+{
+  "name": "xray-system",
+  "version": "1.0.0",
+  "description": "X-Ray library and dashboard for debugging multi-step algorithmic systems",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev:server": "npm run dev --workspace=@xray/server",
+    "dev:dashboard": "npm run dev --workspace=@xray/dashboard",
+    "dev:demo": "npm run dev --workspace=@xray/demo-app"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}
+
