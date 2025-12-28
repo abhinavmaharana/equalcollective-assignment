@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "prebuild": "cd ../xray-sdk && npm install && npm run build",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@xray/sdk": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1"

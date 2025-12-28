@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchExecution } from '../api';
-import { XRayExecution } from '@xray/sdk';
+import { XRayExecution, XRayStep, XRayEvaluation } from '@xray/sdk';
 import StepView from './StepView';
 import { formatDuration, formatDate, copyToClipboard, exportAsJSON } from '../utils';
 
@@ -162,27 +162,27 @@ function ExecutionDetail() {
               <div className="text-2xl font-bold text-gray-900">{execution.steps.length}</div>
               <div className="text-sm text-gray-600">Total Steps</div>
             </div>
-            {execution.steps.some(s => s.evaluations && s.evaluations.length > 0) && (
+            {execution.steps.some((s: XRayStep) => s.evaluations && s.evaluations.length > 0) && (
               <>
                 <div>
                   <div className="text-2xl font-bold text-green-600">
-                    {execution.steps.reduce((sum, s) => {
-                      return sum + (s.evaluations?.filter(e => e.result.passed || e.result.qualified).length || 0);
+                    {execution.steps.reduce((sum: number, s: XRayStep) => {
+                      return sum + (s.evaluations?.filter((e: XRayEvaluation) => e.result.passed || e.result.qualified).length || 0);
                     }, 0)}
                   </div>
                   <div className="text-sm text-gray-600">Total Passed</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-red-600">
-                    {execution.steps.reduce((sum, s) => {
-                      return sum + (s.evaluations?.filter(e => !(e.result.passed || e.result.qualified)).length || 0);
+                    {execution.steps.reduce((sum: number, s: XRayStep) => {
+                      return sum + (s.evaluations?.filter((e: XRayEvaluation) => !(e.result.passed || e.result.qualified)).length || 0);
                     }, 0)}
                   </div>
                   <div className="text-sm text-gray-600">Total Failed</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-gray-900">
-                    {execution.steps.reduce((sum, s) => sum + (s.evaluations?.length || 0), 0)}
+                    {execution.steps.reduce((sum: number, s: XRayStep) => sum + (s.evaluations?.length || 0), 0)}
                   </div>
                   <div className="text-sm text-gray-600">Total Evaluations</div>
                 </div>
@@ -194,7 +194,7 @@ function ExecutionDetail() {
 
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Steps</h2>
-        {execution.steps.map((step, index) => (
+        {execution.steps.map((step: XRayStep, index: number) => (
           <StepView key={step.id} step={step} index={index} />
         ))}
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { XRayStep } from '@xray/sdk';
+import { XRayStep, XRayEvaluation } from '@xray/sdk';
 import EvaluationCard from './EvaluationCard';
 import { formatDuration } from '../utils';
 
@@ -14,12 +14,12 @@ function StepView({ step, index }: StepViewProps) {
 
 
   const hasEvaluations = step.evaluations && step.evaluations.length > 0;
-  const passedCount = step.evaluations?.filter(e => e.result.passed || e.result.qualified).length || 0;
+  const passedCount = step.evaluations?.filter((e: XRayEvaluation) => e.result.passed || e.result.qualified).length || 0;
   const failedCount = (step.evaluations?.length || 0) - passedCount;
 
   // Filter evaluations based on selection
   const filteredEvaluations = hasEvaluations
-    ? step.evaluations!.filter(evaluation => {
+    ? step.evaluations!.filter((evaluation: XRayEvaluation) => {
         if (evaluationFilter === 'all') return true;
         if (evaluationFilter === 'passed') return evaluation.result.passed || evaluation.result.qualified;
         if (evaluationFilter === 'failed') return !(evaluation.result.passed || evaluation.result.qualified);
@@ -134,7 +134,7 @@ function StepView({ step, index }: StepViewProps) {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {filteredEvaluations.map((evaluation, idx) => (
+                  {filteredEvaluations.map((evaluation: XRayEvaluation, idx: number) => (
                     <EvaluationCard key={idx} evaluation={evaluation} />
                   ))}
                 </div>
