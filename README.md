@@ -2,6 +2,25 @@
 
 A general-purpose X-Ray system for debugging multi-step, non-deterministic algorithmic systems. X-Ray provides transparency into decision-making processes by capturing the complete decision trail at each step, including inputs, outputs, reasoning, and per-candidate evaluations.
 
+## 🚀 Quick Start
+
+```bash
+# Install dependencies
+npm install
+npm run build --workspace=@xray/sdk
+
+# Start backend (Terminal 1)
+npm run dev:server
+
+# Start dashboard (Terminal 2)
+npm run dev:dashboard
+
+# Run demo (Terminal 3)
+npm run dev:demo
+```
+
+Then open http://localhost:3000 in your browser!
+
 ## Overview
 
 X-Ray answers the question: **"Why did the system make this decision?"** Unlike traditional tracing tools that focus on performance and flow, X-Ray focuses on decision reasoning, making it easy to debug complex multi-step workflows.
@@ -40,51 +59,212 @@ equalcollective-assignment/
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- TypeScript knowledge (for development)
+- **Node.js 18+** (check with `node --version`)
+- **npm** (comes with Node.js, check with `npm --version`)
+- A terminal/command line interface
+- A modern web browser (Chrome, Firefox, Safari, Edge)
 
-### Installation
+### Step-by-Step Installation
 
-1. **Clone the repository** (if applicable) or navigate to the project directory
+#### Step 1: Navigate to Project Directory
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+```bash
+cd /path/to/equalcollective-assignment
+```
 
-3. **Build all packages**:
-   ```bash
-   npm run build
-   ```
+Or if you cloned the repository:
+```bash
+cd equalcollective-assignment
+```
+
+#### Step 2: Install Dependencies
+
+Install all dependencies for all packages:
+
+```bash
+npm install
+```
+
+This will install dependencies for:
+- Root workspace
+- X-Ray SDK package
+- Backend server package
+- Dashboard package
+- Demo app package
+
+**Expected output:** Should complete without errors. You may see some warnings, which are normal.
+
+#### Step 3: Build the SDK
+
+The SDK must be built first since other packages depend on it:
+
+```bash
+npm run build --workspace=@xray/sdk
+```
+
+**Expected output:**
+```
+> @xray/sdk@1.0.0 build
+> tsc
+```
+
+#### Step 4: Verify Installation
+
+Check that everything is set up correctly:
+
+```bash
+npm ls --workspaces --depth=0
+```
+
+You should see all four packages listed:
+- @xray/sdk
+- @xray/server
+- @xray/dashboard
+- @xray/demo-app
 
 ### Running the System
 
-#### 1. Start the Backend Server
+You'll need **three terminal windows/tabs** open simultaneously:
 
-In one terminal:
+#### Terminal 1: Start the Backend Server
+
 ```bash
 npm run dev:server
 ```
 
-The server will start on `http://localhost:3001` and create a SQLite database (`xray.db`) in the server package directory.
+**Expected output:**
+```
+> @xray/server@1.0.0 dev
+> tsx watch src/server.ts
 
-#### 2. Start the Dashboard
+Database initialized successfully
+X-Ray server running on http://localhost:3001
+```
 
-In another terminal:
+**What this does:**
+- Starts Express server on port 3001
+- Initializes SQLite database (`packages/xray-server/xray.db`)
+- Creates database tables if they don't exist
+- Provides REST API endpoints for executions
+
+**Keep this terminal open** - the server must be running for the system to work.
+
+#### Terminal 2: Start the Dashboard
+
 ```bash
 npm run dev:dashboard
 ```
 
-The dashboard will be available at `http://localhost:3000`.
+**Expected output:**
+```
+  VITE v5.x.x  ready in xxx ms
 
-#### 3. Run the Demo App
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: use --host to expose
+```
 
-In a third terminal:
+**What this does:**
+- Starts Vite development server
+- Serves React dashboard on port 3000
+- Automatically opens in browser (or navigate to http://localhost:3000)
+
+**Keep this terminal open** - the dashboard must be running to view executions.
+
+#### Terminal 3: Run the Demo App
+
 ```bash
 npm run dev:demo
 ```
 
-This will run the competitor selection workflow and automatically send the execution data to the backend. You can then view it in the dashboard.
+**Expected output:**
+```
+🚀 Starting Competitor Selection Workflow...
+
+Reference Product: ProBrand Steel Bottle 32oz Insulated
+Price: $29.99, Rating: 4.2★, Reviews: 1247
+
+✅ Workflow completed successfully!
+
+Selected Competitor:
+  Title: HydroFlask 32oz Wide Mouth Water Bottle
+  Price: $44.99
+  Rating: 4.5★
+  Reviews: 8932
+
+📤 Sending execution data to backend...
+✅ Execution stored successfully!
+
+📊 View in dashboard: http://localhost:3000/executions/exec-xxxxx-xxxxx
+```
+
+**What this does:**
+- Runs the competitor selection workflow
+- Instruments each step with X-Ray
+- Generates execution data
+- Sends data to backend API
+- Prints dashboard URL
+
+**You can run this multiple times** to create multiple executions for testing.
+
+### Viewing Results
+
+1. **Open your browser** and navigate to `http://localhost:3000`
+2. **You should see** the execution list with your demo execution(s)
+3. **Click "View Details"** on any execution to see the full decision trail
+4. **Explore:**
+   - Expand steps to see inputs/outputs/reasoning
+   - View evaluations with pass/fail indicators
+   - Use search and filter features
+   - Export execution data as JSON
+
+### Troubleshooting
+
+#### Port Already in Use
+
+If you see `EADDRINUSE: address already in use :::3001`:
+
+```bash
+# Kill process on port 3001
+lsof -ti:3001 | xargs kill -9
+
+# Or use a different port
+PORT=3002 npm run dev:server
+```
+
+#### Dashboard Can't Connect to Server
+
+- Ensure the server is running on port 3001
+- Check browser console for errors (F12 → Console)
+- Verify `packages/xray-dashboard/vite.config.ts` proxy settings
+
+#### SDK Not Found Error
+
+If demo app can't find `@xray/sdk`:
+
+```bash
+# Rebuild the SDK
+npm run build --workspace=@xray/sdk
+
+# Or rebuild all packages
+npm run build
+```
+
+#### Database Errors
+
+- Delete `packages/xray-server/xray.db` and restart the server
+- Check file permissions in the server directory
+- Ensure you have write permissions
+
+#### Build Errors
+
+If you see TypeScript errors:
+
+```bash
+# Clean and rebuild
+rm -rf packages/*/dist packages/*/node_modules
+npm install
+npm run build --workspace=@xray/sdk
+```
 
 ## Usage
 
@@ -115,10 +295,28 @@ const execution = xray.endExecution();
 
 ### API Endpoints
 
-- `GET /api/executions` - List all executions
-- `GET /api/executions/:id` - Get full execution details
-- `POST /api/executions` - Store a new execution
-- `GET /api/executions/:id/steps` - Get steps for an execution
+All endpoints are prefixed with `/api`:
+
+- `GET /api/executions` - List all executions (returns array of execution summaries)
+- `GET /api/executions/:id` - Get full execution details with all steps and evaluations
+- `POST /api/executions` - Store a new execution (accepts XRayExecution JSON)
+- `GET /api/executions/:id/steps` - Get steps for an execution (alias for GET /api/executions/:id, returns steps array)
+- `GET /health` - Health check endpoint (returns `{ status: 'ok' }`)
+
+**Example API Usage:**
+
+```bash
+# List all executions
+curl http://localhost:3001/api/executions
+
+# Get specific execution
+curl http://localhost:3001/api/executions/exec-1234567890-abc123
+
+# Store new execution
+curl -X POST http://localhost:3001/api/executions \
+  -H "Content-Type: application/json" \
+  -d @execution.json
+```
 
 ## Demo Application
 
@@ -154,9 +352,26 @@ The SDK uses a simple, imperative API that's easy to integrate:
 
 ### Dashboard UX
 
-- **Execution List**: Quick overview of all executions with status and duration
-- **Execution Detail**: Step-by-step view with expandable sections
-- **Visual Indicators**: Color-coded pass/fail status for quick scanning
+- **Execution List**: 
+  - Quick overview of all executions with status and duration
+  - **Search functionality** - Search by execution ID or metadata
+  - **Status filtering** - Filter by All/Completed/Running
+  - **Relative time display** - Shows "2 minutes ago" for recent executions
+  - **Copy ID** - One-click copy execution ID to clipboard
+- **Execution Detail**: 
+  - Step-by-step view with expandable sections
+  - **Summary metrics panel** - Quick stats (total steps, passed/failed counts)
+  - **Export functionality** - Download execution as JSON file
+  - **Copy execution ID** button
+- **Step View**:
+  - Expandable step cards with inputs, outputs, and reasoning
+  - **Evaluation filtering** - Filter evaluations by All/Passed/Failed
+  - Pass/fail counts displayed in header
+- **Visual Indicators**: 
+  - Color-coded pass/fail status (green/red) for quick scanning
+  - Status badges for execution state
+- **Loading States**: 
+  - Skeleton loaders for better perceived performance
 - **JSON Viewer**: Raw data available for deep inspection
 - **Responsive Design**: Works on different screen sizes
 
@@ -166,29 +381,66 @@ The SDK uses a simple, imperative API that's easy to integrate:
 - **JSON Columns**: Flexible schema that accommodates varying step structures
 - **Normalized Tables**: Separate tables for executions, steps, and evaluations for efficient querying
 
+## Completed Features
+
+### ✅ Core Functionality
+- [x] X-Ray SDK with clean, simple API
+- [x] Execution tracking with step nesting support
+- [x] Per-candidate evaluation capture
+- [x] Backend API server with SQLite storage
+- [x] React dashboard for visualization
+- [x] Demo application showcasing the system
+
+### ✅ Dashboard Features
+- [x] Execution list with search and status filtering
+- [x] Relative time formatting ("2 minutes ago")
+- [x] Copy execution ID to clipboard
+- [x] Execution detail view with expandable steps
+- [x] Summary metrics panel
+- [x] Evaluation filtering (All/Passed/Failed)
+- [x] Export execution as JSON
+- [x] Skeleton loading states
+- [x] Color-coded pass/fail indicators
+
+### ✅ Code Quality
+- [x] Full TypeScript with type safety
+- [x] Refactored long functions into smaller, focused ones
+- [x] Shared utility functions (DRY principle)
+- [x] Comprehensive error handling and validation
+- [x] Clear, readable code structure
+- [x] JSDoc comments on key functions
+
+### ✅ Error Handling
+- [x] SDK validation (prevents invalid operations)
+- [x] API request validation with detailed error messages
+- [x] Network error handling in dashboard
+- [x] User-friendly error messages throughout
+
 ## Known Limitations & Future Improvements
 
 ### Current Limitations
 
 1. **Single Execution Context**: SDK supports one active execution at a time
 2. **In-Memory During Execution**: Data is only persisted when sent to the backend
-3. **No Real-Time Updates**: Dashboard requires manual refresh
-4. **Basic Search/Filter**: Dashboard list view doesn't support search or filtering yet
-5. **No Authentication**: API has no authentication/authorization
-6. **Limited Error Handling**: Basic error handling in place
+3. **No Real-Time Updates**: Dashboard requires manual refresh (no WebSocket streaming)
+4. **No Authentication**: API has no authentication/authorization
+5. **Limited Querying**: No advanced query interface for finding patterns across executions
+6. **No Pagination**: All executions load at once (fine for demo, but would need pagination for production)
 
 ### Future Improvements
 
 1. **Multiple Execution Contexts**: Support concurrent executions with context isolation
-2. **Streaming API**: Real-time updates to dashboard as executions progress
-3. **Advanced Filtering**: Search and filter executions by metadata, step names, etc.
-4. **Export/Import**: Export executions as JSON, import for analysis
-5. **Step Templates**: Predefined step types with validation
-6. **Performance Metrics**: Track step durations and identify bottlenecks
+2. **Streaming API**: Real-time updates to dashboard via WebSockets as executions progress
+3. **Advanced Search**: Search by step names, filter by date ranges, complex queries
+4. **Import Functionality**: Import exported JSON executions for analysis
+5. **Step Templates**: Predefined step types with validation schemas
+6. **Performance Metrics**: Visualize step durations, identify bottlenecks, execution timelines
 7. **Comparison View**: Compare multiple executions side-by-side
 8. **Query Interface**: SQL-like query interface for finding specific patterns
 9. **Authentication**: Add user authentication and multi-tenancy
 10. **Production Storage**: Support for PostgreSQL, MongoDB, etc.
+11. **Pagination**: Paginate execution list for better performance with many executions
+12. **Toast Notifications**: Visual feedback for actions like copy, export, etc.
 
 ## Development
 
@@ -212,15 +464,81 @@ cd packages/demo-app && npm run build
 
 Each package has its own `tsconfig.json` that extends the root config. The root config provides common compiler options.
 
+## Quick Start Guide
+
+### First Time Setup (5 minutes)
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   npm run build --workspace=@xray/sdk
+   ```
+
+2. **Start backend server** (Terminal 1):
+   ```bash
+   npm run dev:server
+   ```
+
+3. **Start dashboard** (Terminal 2):
+   ```bash
+   npm run dev:dashboard
+   ```
+
+4. **Run demo** (Terminal 3):
+   ```bash
+   npm run dev:demo
+   ```
+
+5. **View results:** Open http://localhost:3000 in your browser
+
+### Running Multiple Executions
+
+To create multiple executions for testing:
+
+1. Keep server and dashboard running
+2. Run `npm run dev:demo` multiple times in Terminal 3
+3. Each run creates a new execution
+4. Refresh the dashboard to see all executions
+5. Use search/filter to find specific executions
+
 ## Testing
 
-Currently, the system is tested manually via the demo app. To test:
+The system is tested manually via the demo app. To test all features:
 
-1. Start the server and dashboard
-2. Run the demo app multiple times
-3. Verify executions appear in the dashboard
-4. Check that all step details are displayed correctly
-5. Verify evaluations show pass/fail status correctly
+1. **Basic Flow Test:**
+   - Start server and dashboard
+   - Run demo app
+   - Verify execution appears in dashboard
+   - Click "View Details" and verify all steps are visible
+
+2. **Search & Filter Test:**
+   - Run demo multiple times to create several executions
+   - Use search box to find execution by ID
+   - Use status filter to show only completed/running
+   - Verify filtered results are correct
+
+3. **Evaluation Test:**
+   - Open execution detail view
+   - Expand the "apply_filters" step
+   - Use evaluation filter dropdown (All/Passed/Failed)
+   - Verify evaluations are filtered correctly
+   - Expand evaluation cards to see details
+
+4. **Export Test:**
+   - Click "Export JSON" button in execution detail
+   - Verify JSON file downloads
+   - Open file and verify it contains complete execution data
+
+5. **Copy Test:**
+   - Click copy icon next to execution ID in list view
+   - Click "Copy ID" button in detail view
+   - Paste and verify ID was copied correctly
+
+6. **Error Handling Test:**
+   - Stop the backend server
+   - Try to access dashboard
+   - Verify error message is displayed
+   - Restart server and verify it recovers
 
 ## License
 
