@@ -46,13 +46,14 @@ export async function initDatabase(): Promise<Database> {
     // File doesn't exist, will create new database
   }
 
-  db = new SQL.Database(buffer);
+  const database = new SQL.Database(buffer);
+  db = database;
 
   // Enable foreign keys
-  db.run('PRAGMA foreign_keys = ON');
+  database.run('PRAGMA foreign_keys = ON');
 
   // Create executions table
-  db.run(`
+  database.run(`
     CREATE TABLE IF NOT EXISTS executions (
       id TEXT PRIMARY KEY,
       metadata TEXT,
@@ -63,7 +64,7 @@ export async function initDatabase(): Promise<Database> {
   `);
 
   // Create steps table
-  db.run(`
+  database.run(`
     CREATE TABLE IF NOT EXISTS steps (
       id TEXT PRIMARY KEY,
       execution_id TEXT NOT NULL,
@@ -83,7 +84,7 @@ export async function initDatabase(): Promise<Database> {
   `);
 
   // Create evaluations table
-  db.run(`
+  database.run(`
     CREATE TABLE IF NOT EXISTS evaluations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       step_id TEXT NOT NULL,
@@ -97,7 +98,7 @@ export async function initDatabase(): Promise<Database> {
   // Save the database to disk
   await saveDatabase();
 
-  return db;
+  return database;
 }
 
 /**

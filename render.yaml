@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: xray-server
+    env: node
+    rootDir: .
+    buildCommand: cd packages/xray-sdk && npm install && npm run build && cd ../xray-server && npm install && npm run build
+    startCommand: cd packages/xray-server && npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+
