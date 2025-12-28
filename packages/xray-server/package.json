@@ -4,6 +4,7 @@
   "description": "X-Ray backend API server",
   "main": "dist/server.js",
   "scripts": {
+    "prebuild": "cd ../xray-sdk && npm install && npm run build",
     "build": "tsc",
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js"
