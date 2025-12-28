@@ -18,7 +18,8 @@
    - **Output Directory:** `dist` (default)
    - **Install Command:** `npm install` (default)
 4. Under **Environment Variables**, add:
-   - `VITE_API_BASE_URL` = `https://your-render-backend-url.onrender.com`
+   - `VITE_API_BASE_URL` = `https://your-render-backend-url.onrender.com/api`
+   - **Important**: Include `/api` in the URL since the backend routes are mounted at `/api`
 5. Click **Save**
 
 ### Option B: Using vercel.json (Alternative)
